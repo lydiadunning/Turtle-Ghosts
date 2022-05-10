@@ -43,7 +43,6 @@ class GhostTurtle(Turtle):
         returns: boolean indicating whether to turn here
         """
         self.setx(self.xcor() + self.move_distance_x)
-        print(self.xcor())
         return self.xcor() > 300 or self.xcor() < -310
 
     def move_y(self):
@@ -62,12 +61,12 @@ class GhostTurtle(Turtle):
 
         returns: True if the ghost should be destroyed.
         """
-        if self.color() == "white":
-            self.color("lavenderblush3")
-        elif self.color() == "lavenderblush3":
+        print("turtle.hit")
+        print(self.pencolor())
+        if self.pencolor() == "white":
+
             self.color("lavenderblush4")
-        elif self.color() == "lavenderblush4":
-            self.color("gray20")
+            return False
         else:
             return True
 
@@ -79,6 +78,9 @@ class GhostTurtle(Turtle):
                 'bottom': self.ycor() - 20,
                 'left': self.xcor() - 20,
                 'right': self.xcor() + 20}
+
+    def detect_collision(self, missile_x, missile_y):
+        return self.get_collision()['left'] < missile_x < self.get_collision()['right'] and self.get_collision()['bottom'] < missile_y < self.get_collision()['top']
 
 
 class GhostTurtleSwarm():
@@ -129,10 +131,19 @@ class GhostTurtleSwarm():
         return collision
 
 
-    def hit(self, turtle):
+    def detect_hit(self, missile_x, missile_y):
         """does nothing so far"""
-        turtle.reset()
-        index = self.turtles.index(turtle)
-        self.turtles.remove(turtle)
+        collisions = [turtle for turtle in self.turtles if turtle.detect_collision(missile_x, missile_y)]
+        if collisions:
+            turtle = collisions[0]
+            if turtle.hit():
+                print("in if_turtle.hit")
+                turtle.reset()
+                turtle.hideturtle()
+                self.turtles.remove(turtle)
+
+            return True
+        else:
+            return False
 
 

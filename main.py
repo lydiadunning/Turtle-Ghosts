@@ -51,7 +51,7 @@ while True:
     spent_missiles = []
     for missile in missiles:
         in_motion = True
-        if missile.ycor() <= 210:
+        if missile.ycor() <= 210 and missile.ycor() >= 190:
             hit_test = lilypad.detect_missile(missile.xcor(), missile.ycor(), "missile")
             if hit_test:
                 missile.shoot_through(hit_test)
@@ -59,6 +59,12 @@ while True:
                 in_motion = False
         if missile.ycor() <= -300:
             spent_missiles.append(missile)
+        # Detect collision with any ghost. Damage the ghost, destroy the missile.
+        if ghosts.detect_hit(missile.xcor(), missile.ycor()):
+            in_motion = False
+            missile.hideturtle()
+            spent_missiles.append(missile)
+
         if in_motion:
             missile.move()
     missiles = [m for m in missiles if m not in spent_missiles]
