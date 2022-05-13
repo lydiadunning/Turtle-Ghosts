@@ -10,6 +10,8 @@ from turtle import Turtle
 
 SPACING_X = 60
 SPACING_Y = 70
+STARTING_X = -220
+STARTING_Y = -100
 
 class GhostTurtle(Turtle):
     """A single turtle, extends Turtle.
@@ -61,8 +63,6 @@ class GhostTurtle(Turtle):
 
         returns: True if the ghost should be destroyed.
         """
-        print("turtle.hit")
-        print(self.pencolor())
         if self.pencolor() == "white":
 
             self.color("lavenderblush4")
@@ -74,8 +74,8 @@ class GhostTurtle(Turtle):
         """
         Returns a dictionary of the outer boundaries of the turtle
         """
-        return {'top': self.ycor() + 20,
-                'bottom': self.ycor() - 20,
+        return {'top': self.ycor() + 40,
+                'bottom': self.ycor() - 30,
                 'left': self.xcor() - 20,
                 'right': self.xcor() + 20}
 
@@ -94,8 +94,8 @@ class GhostTurtleSwarm():
     """
     def __init__(self):
         """Initializes the Ghost Turtles"""
-        self.starting_x = -220
-        self.starting_y = -100
+        self.starting_x = STARTING_X
+        self.starting_y = STARTING_Y
 
         # A list of ghost turtle object instances
         self.turtles = []
@@ -122,13 +122,15 @@ class GhostTurtleSwarm():
         :return: returns collision data from any turtles above the lowest point of the lilypads.
 
         """
-        collision = []
         # This next line might do too much.
         if [True for turtle in self.turtles if turtle.move_x_detect_edge()]:
+            turtle_coords = []
             for turtle in self.turtles:
                 turtle.move_distance_x *= -1
-                collision.append(turtle.move_y())
-        return collision
+                turtle.move_y()
+                if turtle.ycor() > 170:
+                    turtle_coords.append(turtle.get_collision())
+            return turtle_coords
 
 
     def detect_hit(self, missile_x, missile_y):
@@ -137,7 +139,6 @@ class GhostTurtleSwarm():
         if collisions:
             turtle = collisions[0]
             if turtle.hit():
-                print("in if_turtle.hit")
                 turtle.reset()
                 turtle.hideturtle()
                 self.turtles.remove(turtle)
@@ -145,5 +146,25 @@ class GhostTurtleSwarm():
             return True
         else:
             return False
+
+    def get_all_collision(self):
+        return [turtle.collision() for turtle in self.turtles]
+
+    def remove_ghost_by_collision(self, collision_list):
+        affected_ghosts = [ghost for ghost in self.turtles if ghost.get_collision() in collision_list]
+        ghosts_to_remove = [ghost for ghost in affected_ghosts if ghost.hit()]
+        for ghost in ghosts_to_remove:
+            ghost.hideturtle()
+            self.turtles.remove(ghost)
+
+    def get_first_row(self):
+        all_y = [turtle.ycor() for turtle in self.turtles]
+        # all_y.sort()
+
+        to_return = [turtle for turtle in self.turtles if turtle.ycor() >= all_y[0]]
+        return to_return
+
+
+
 
 

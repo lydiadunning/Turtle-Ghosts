@@ -26,12 +26,26 @@ class Missile(Turtle):
     def shoot_through(self, y_start):
         """Draws a short black line meant to indicate player-initiated damage to a lilypad.
         Hides the missile. """
+
         self.sety(y_start)
         self.color("black")
         self.pensize(3)
         self.pendown()
-        self.forward(5)
+        self.forward(9)
         self.hideturtle()
 
 
+class Bubble(Missile):
+    def __init__(self, start_x, start_y):
+        super(Bubble, self).__init__(start_x, start_y)
+        self.setheading(90)
+        self.shape("circle")
+        self.color('aliceblue')
+
+    def blast(self, y_center):
+        self.sety(y_center)
+        self.color("black")
+        self.shape("blast")
+        self.stamp()
+        self.hideturtle()
 

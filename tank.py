@@ -22,13 +22,30 @@ class Tank(Turtle):
         self.penup()
         self.goto(TANK_POSITION)
         self.collision_width = 60
+        self.on_screen = True
 
     def move_r(self):
         """Moves the tank right 5 units, within screen boundaries"""
-        if self.xcor() < 310:
-            self.forward(5)
+        if self.on_screen:
+            if self.xcor() < 310:
+                self.forward(5)
 
     def move_l(self):
         """Moves the tank left 5 units, within screen boundaries"""
-        if self.xcor() > -315:
-            self.backward(5)
+        if self.on_screen:
+            if self.xcor() > -315:
+                self.backward(5)
+
+    def blow_up(self):
+        print("blow_up")
+        self.on_screen = False
+        self.right(90)
+
+    def reset_from_top(self):
+        self.setheading(0)
+        self.penup()
+        self.goto(TANK_POSITION)
+        self.on_screen = True
+
+    def sink(self):
+        self.forward(20)
